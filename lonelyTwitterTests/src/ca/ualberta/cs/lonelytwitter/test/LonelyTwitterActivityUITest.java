@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.ViewAsserts;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import ca.ualberta.cs.lonelytwitter.LonelyTwitterActivity;
 import ca.ualberta.cs.lonelytwitter.NormalTweetModel;
+import ca.ualberta.cs.lonelytwitter.R;
 
 /*
  * generate this class with new.. JUnit Test Case
@@ -32,6 +35,28 @@ public class LonelyTwitterActivityUITest extends
 		activity = getActivity();
 
 		textInput = ((EditText) activity.findViewById(ca.ualberta.cs.lonelytwitter.R.id.body));
+	}
+	
+	public void addTweet() {
+		ListView oldTweetsList = (ListView) activity.findViewById(R.id.oldTweetsList);
+		ListAdapter adapter = oldTweetsList.getAdapter();
+		String text = "hello world";
+		makeTweet(text);
+		assertTrue("added item", adapter.getCount()==1);
+		//assertEquals("LonelyTweetModel?", NormalTweetModel, adapter.getItem(0).getClass());
+		assertEquals("Right text?", text, adapter.getItem(0).toString());
+	}
+	
+	public void testSetText() {
+		instrumentation.runOnMainSync(new Runnable() {
+			@Override
+			public void run() {
+				String text = "tweet";
+				textInput.setText(text);
+			}
+		});
+		instrumentation.waitForIdleSync();
+		assertEquals("correct text?","tweet", textInput.getText().toString());
 	}
 	
 	/*
